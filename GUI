@@ -1,0 +1,81 @@
+import javax.swing.*;
+import java.awt.*;
+public class UI {
+	JFrame frame = new JFrame("Internet Download Manager.");
+	JTextField link = new JTextField(50);
+	JPanel jap = new JPanel() ;
+	JButton go = new JButton("GO!");
+	JButton Download= new JButton("DOWNLOAD!");
+	JButton Pause= new JButton("PAUSE!");	
+	JButton Resume= new JButton("RESUME!");
+	JButton Delete= new JButton("Delete!");
+	JTable table;
+	//Object[][] rows;
+	String rows[][] =
+		{
+			{ "FileName", "null", "null","null" },
+			{ "FileName", "null", "null" ,"null"},
+			{ "FileName", "null", "null","null" },
+			{ "FileName", "null", "null","null" }
+		};
+	
+	final String[] columnNames = {"FileName", "Size",
+			"Progress", "Status"};
+	JScrollPane Scroll_Table;
+	
+	JLabel link_text = new JLabel("Enter the link of File to Download...");	
+	UI(){
+															//Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	    													//frame.setBounds(0,0,screenSize.width, screenSize.height);
+	frame.setExtendedState(JFrame.MAXIMIZED_BOTH);			//frame.pack();
+	frame.setLayout(null);												//frame.setSize();
+	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+	//jap.setLocation(150, 200);
+	//jap.setSize(200, 20);
+	link_text.setBounds(273,93,300,10);
+	
+	
+	jap.add(link_text);
+	jap.add(link);
+	jap.setBounds(200, 120, 700, 30); 
+
+	
+	table = new JTable(rows,columnNames);
+	table.setBounds(270, 220, 900, 170);
+	
+	Scroll_Table = new JScrollPane(table);
+	Scroll_Table.setBounds(270, 230, 900, 170);
+	
+	Download.setBounds(50, 150, 120, 30);
+	Download.setBackground(Color.green);
+	
+	Pause.setBounds(50, 200, 120, 30);
+	Pause.setBackground(Color.BLACK);
+	Pause.setForeground(Color.WHITE);
+	
+	Resume.setBounds(50, 250, 120, 30);
+	Resume.setBackground(Color.GRAY);
+	Resume.setForeground(Color.WHITE);
+	
+	Delete.setBounds(50, 300, 120, 30);
+	Delete.setBackground(Color.red);
+	
+	go.setBounds(925, 120, 75, 30); 
+	go.setBackground(Color.cyan);
+
+	frame.getContentPane().add(jap);
+	frame.add(go);
+	frame.add(Download);
+	frame.add(Resume);
+	frame.add(Pause);
+	frame.add(Delete);
+	frame.add(jap);
+	frame.add(link_text);
+	frame.add(Scroll_Table);
+	frame.setVisible(true);
+	}
+public static void main(String[] args){
+	UI u = new UI();
+}
+}
