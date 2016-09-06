@@ -54,6 +54,12 @@ public class UI {
 	Pause.setBackground(Color.BLACK);
 	Pause.setForeground(Color.WHITE);
 	
+	Pause.addActionListener(new ActionListener(){
+		public void actionPerformed(ActionEvent eve){
+			Pause.setBackground(Color.cyan);
+		}
+	});
+
 	Resume.setBounds(50, 250, 120, 30);
 	Resume.setBackground(Color.GRAY);
 	Resume.setForeground(Color.WHITE);
