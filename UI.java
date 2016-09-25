@@ -1,10 +1,10 @@
-package javaapplication1;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
 import java.util.ArrayList;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -20,15 +20,18 @@ import java.awt.event.MouseEvent;
 import java.awt.Point;
 
 public class UI extends Download {
-	private Download selectedDownload;
-	private ArrayList<Download> downloadList = new ArrayList<Download>();	
+	private static Download selectedDownload;
+	//private ArrayList<Download> downloadList = new ArrayList<Download>();	
 	JFrame frame = new JFrame("Internet Download Manager.");
 	JTextField link = new JTextField(50);
+	//JTextField enableSequentialDownload = new JTextField("Enable Sequential Downlaod");
+	JCheckBox check = new JCheckBox();
+	
 	JPanel jap = new JPanel() ;
 	JButton go = new JButton("GO!");
-	JButton Download= new JButton("DOWNLOAD!");
-	JButton Pause= new JButton("PAUSE!");	
-	JButton Resume= new JButton("RESUME!");
+	static JButton Download= new JButton("DOWNLOAD!");
+	static JButton Pause= new JButton("PAUSE!");	
+	static JButton Resume= new JButton("RESUME!");
 	JButton Delete= new JButton("Delete!");
 	JTable table;
 	
@@ -49,8 +52,43 @@ public class UI extends Download {
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 	link_text.setBounds(273,93,300,10);
-    
-        
+    check.setLocation(200, 45);
+    check.setText("Enable Sequential Downlaod");
+	check.setSelected(false);
+	check.isVisible();
+	check.addMouseListener(new MouseListener(){
+
+		@Override
+		public void mouseClicked(MouseEvent arg0) {
+			check.setSelected(true);
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseExited(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mousePressed(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	});
+	
 	jap.add(link_text);
 	jap.add(link);
 	jap.setBounds(200, 120, 700, 30); 
@@ -65,21 +103,21 @@ public class UI extends Download {
     {   
        Point pnt = evt.getPoint();
        int row = table.rowAtPoint(pnt);
-       selectedDownload=getDownload(row);
+       selectedDownload=model.getDownload(row);
+       Delete.setEnabled(true);
        //System.out.println(selectedDownload);
-       if(status==DOWNLOADING)
+       if(selectedDownload.status==DOWNLOADING)
     	   Pause.setEnabled(true);
-       else if(status==PAUSED)
+       else if(selectedDownload.status==PAUSED)
     	   Resume.setEnabled(true);
-       else if(status==CANCELLED)
+       else if(selectedDownload.status==CANCELLED)
     	   Download.setEnabled(true);
-       else if(status==COMPLETE)
+       else if(selectedDownload.status==COMPLETE)
        {
     	   Pause.setEnabled(false);
     	   Resume.setEnabled(false);
     	   Download.setEnabled(false);
-       }
-       Delete.setEnabled(true);
+       } 
     }
     public void mouseEntered(MouseEvent arg0) {
 }
@@ -110,6 +148,41 @@ public void mouseReleased(MouseEvent arg0) {
 	Download.setBounds(50, 150, 120, 30);
 	Download.setBackground(Color.green);
 	Download.setEnabled(false);
+	Download.addMouseListener(new MouseListener(){
+
+		@Override
+		public void mouseClicked(MouseEvent arg0) {
+			if(selectedDownload!=null)
+			{
+				selectedDownload.start(selectedDownload.getUrl());
+			}
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseExited(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mousePressed(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	});
 	
 	Pause.setBounds(50, 200, 120, 30);
 	Pause.setBackground(Color.BLACK);
@@ -119,9 +192,12 @@ public void mouseReleased(MouseEvent arg0) {
 		public void mouseClicked(MouseEvent e) {
 			  if(selectedDownload!=null)
               {
-                  selectedDownload.pause();
-                  Pause.setEnabled(false);
-                  Resume.setEnabled(true);
+				  if(selectedDownload.status!=COMPLETE)
+                  {
+					  selectedDownload.pause();
+					  Pause.setEnabled(false);
+					  Resume.setEnabled(true);
+                  }			  
               }			
 		}
 		public void mousePressed(MouseEvent e) {
@@ -165,6 +241,7 @@ public void mouseReleased(MouseEvent arg0) {
 			  if(selectedDownload!=null)
             {
                 selectedDownload.cancel();
+                model.clearDownload(table.rowAtPoint(e.getPoint()));
             }			
 		}
 		public void mousePressed(MouseEvent e) {
@@ -200,8 +277,20 @@ public void mouseReleased(MouseEvent arg0) {
 	frame.setVisible(true);
 	//frame.add(downloadsPanel);
 	frame.add(renderer);
+	//frame.add(enableSequentialDownload);
+	frame.add(check);
         
 }
+	public static void changeTheButtons(){
+		if(selectedDownload.status==2)
+		{
+			Pause.setEnabled(false);
+			Resume.setEnabled(false);
+			Download.setEnabled(false);
+		}
+	}
+	
+	
 	protected void Add() {
 		URL verifiedUrl = verifyUrl(link.getText());
 		if (verifiedUrl != null) {
@@ -237,10 +326,6 @@ public void mouseReleased(MouseEvent arg0) {
 			 return null;
 			 return verifiedUrl;
 		}
-	 
-	 public Download getDownload(int row) {
-		    return (Download) downloadList.get(row);
-		  }	   
 public static void main(String[] args){
 	new UI();
 }

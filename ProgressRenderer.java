@@ -1,4 +1,4 @@
-package javaapplication1;
+//package javaapplication1;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.*;

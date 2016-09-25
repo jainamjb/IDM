@@ -1,9 +1,8 @@
-package javaapplication1;
+//package javaapplication1;
 import java.io.*;
 
 import java.net.*;
 import java.util.*;
-
 
 class Download extends Observable implements Runnable {
 private static final int BUFFER_SIZE = 8192;
@@ -19,7 +18,7 @@ protected int downloaded; // number of bytes downloaded
 protected int status; // current status of download
 private double download_speed;
 private double start_time;
-
+private Thread t;
 
 Download(){
 	
@@ -31,7 +30,7 @@ Download(){
 	//downloaded = 0;
 	status = DOWNLOADING;
 	this.url=url;
-Thread t = new Thread(this);
+t = new Thread(this);
 status=DOWNLOADING;
 t.start();
 }
@@ -66,22 +65,39 @@ if (contentLength < 1) {
 stream=new BufferedInputStream(connection.getInputStream());//get stream
 
 //Open file and seek.
-file = new FileOutputStream(getFileName(url));
 
+file = new FileOutputStream(getFileName(url));
 byte[] buffer= new byte[BUFFER_SIZE];
  start_time= System.nanoTime();
 int len=0;
-downloaded=0;
 len=stream.read(buffer);
+
+if(status==DOWNLOADING)
+downloaded=0;
 try{
-while (len != -1 && status == DOWNLOADING) {
+boolean goback=false;
+do{
+while (len != -1&&status==DOWNLOADING) {
 //adjusting buffer
 file.write(buffer,0,len);
 len=stream.read(buffer) ;
 downloaded+=len;
-
+/*if(getProgress()==30){
+	Thread.currentThread().sleep(10000);
+}*/
 stateChanged();
 }
+if(status==PAUSED){
+	goback=true;
+	//System.out.println("Paused !!!!!");
+}
+	synchronized(t){
+	//System.out.println(t.getName());
+	t.wait();}
+
+System.out.println(status);
+}while(goback==true);
+
 }
 finally{
 file.flush();
@@ -102,11 +118,13 @@ stream.close();
 /* Change status to complete if this point was
 reached because downloading has finished. */
 status = COMPLETE;
+UI.changeTheButtons();
 stateChanged();
 
 } 
 catch (Exception e) {
 error();
+e.printStackTrace(System.out);
 }
 }
  
@@ -141,7 +159,13 @@ stateChanged();
 public void resume() {
 status = DOWNLOADING;
 stateChanged();
-//start(url);
+synchronized(t){
+t.notify();}
+}
+public void start(URL url)
+{
+	Thread t=new Thread(this);
+	t.start();
 }
 
 public void cancel() {
