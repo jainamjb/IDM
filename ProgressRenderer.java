@@ -1,7 +1,8 @@
-package javaapplication1;
+//package javaapplication1;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.*;
+@SuppressWarnings("serial")
 class ProgressRenderer extends JProgressBar
         implements TableCellRenderer {
     public ProgressRenderer(int min, int max) {
