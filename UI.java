@@ -325,7 +325,7 @@ public void mouseReleased(MouseEvent arg0) {
 	       }
 	}
 	public static void main(String[] args){
-	//(Thread.currentThread()).setName("MainThread");
+	//(Thread.currentThread()).setName("MainThread")
 	new UI();
 }
 }
